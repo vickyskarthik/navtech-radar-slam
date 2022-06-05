@@ -98,7 +98,9 @@ int main(int argc, char *argv[])
     if(keypoint_extraction == 2) method = "orb";
 
     // File for storing the results of estimation on each frame (and the accuracy)
+    // Output stream class to operate on files.	Objects of this class maintain a filebuf object
     std::ofstream ofs;
+    // ios::out allows output (write operations) to a stream	
     ofs.open( radardir + "yeti_odom_result_" + method + ".csv", std::ios::out );
     // ofs << "x,y,yaw,gtx,gty,gtyaw,time1,time2,xmd,ymd,yawmd,xdopp,ydopp,yawdopp\n";
     
