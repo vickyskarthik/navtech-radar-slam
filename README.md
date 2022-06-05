@@ -1,5 +1,7 @@
-navtech_radar_slam_mulran.launch launches the yeti_radar_odometry.launch, which in turn launches the the yetiOdom node
+navtech_radar_slam_mulran.launch launches the yeti_radar_odometry.launch, which in turn launches the the yetiOdom node.
+
 yetiOdom node saves the trajectory without loop closure
+
 which can be visualized using the repo: https://github.com/gisbi-kim/yeti_odom_drawer
 
 # navtech-radar-slam
