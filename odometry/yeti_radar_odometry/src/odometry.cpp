@@ -38,18 +38,24 @@ Eigen::MatrixXd currOdom;
 int main(int argc, char *argv[]) 
 {
 	ros::init(argc, argv, "yetiOdom");
+	// NodeHandle is the main access point to communications with the ROS system.
 	ros::NodeHandle nh;
+        // specify the numner of threads to use when creating parallel regions
+	// omp - OpenMP API supports multi-platform shared memory parallel programming in C/C++
+        omp_set_num_threads(8);
 
-    omp_set_num_threads(8);
-
+	//Tell ROS master that we are publishing nav_msgs
+	//Publishing odometry wieht yeti_odom and queue size=100
 	pubOdom = nh.advertise<nav_msgs::Odometry>("/yeti_odom", 100);
-    currOdom = Eigen::MatrixXd::Identity(4, 4); // initial pose is I
+	//currOdom is set to 4x4 Identity matrix
+        currOdom = Eigen::MatrixXd::Identity(4, 4); // initial pose is I
 
 	pubLaserCloudLocal = nh.advertise<sensor_msgs::PointCloud2>("/yeti_cloud_local", 100);
 	pubLaserCloudGlobal = nh.advertise<sensor_msgs::PointCloud2>("/yeti_cloud_global", 100);
 
+    // Loading dataset
     std::string seq_dir;
-	nh.param<std::string>("seq_dir", seq_dir, ""); // pose assignment every k frames 
+    nh.param<std::string>("seq_dir", seq_dir, ""); // pose assignment every k frames 
     std::string radardir = seq_dir + "sensor_data/radar/";
     std::string datadir = radardir + "polar_oxford_form/";
 
@@ -69,13 +75,16 @@ int main(int argc, char *argv[])
     // ORB descriptor / matching parameters
     int patch_size = 21;                // width of patch in pixels in cartesian radar image
     float nndr = 0.80;                  // Nearest neighbor distance ratio
+
     // RANSAC
     double ransac_threshold = 0.35;
     double inlier_ratio = 0.90;
     int max_iterations = 100;
+    
     // MDRANSAC
     int max_gn_iterations = 10;
     double md_threshold = pow(ransac_threshold, 2);
+    
     // DOPPLER
     double beta = 0.049;
 
