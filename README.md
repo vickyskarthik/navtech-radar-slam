@@ -2,7 +2,7 @@ navtech_radar_slam_mulran.launch launches the yeti_radar_odometry.launch, which 
 
 yetiOdom node saves the trajectory without loop closure
 
-which can be visualized using the repo: https://github.com/gisbi-kim/yeti_odom_drawer
+which can be visualized using the repo: https://github.com/gisbi-kim/yeti_odom_drawer the code for which is uploaded as yet_odom.m
 
 # navtech-radar-slam
 Radar SLAM: yeti radar odometry + ScanContext-based Loop Closing 
