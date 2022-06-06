@@ -28,7 +28,10 @@
 #include "features.hpp"
 #include "association.hpp"
 
+// used PointType instead of pcl::PointXYZI 
+// pcl::PointXYZI is a datastructure in PCL is the template class.  3D XYZ plus intensity of the point
 typedef pcl::PointXYZI PointType;
+
 
 ros::Publisher pubOdom;
 ros::Publisher pubLaserCloudLocal, pubLaserCloudGlobal;
@@ -89,6 +92,8 @@ int main(int argc, char *argv[])
     double beta = 0.049;
 
     // Get file names of the radar images
+    // std::vector is a sequence container that encapsulates dynamic size arrays.
+    // get_file_names() is declared and defined in radar_utils.cpp
     std::vector<std::string> radar_files;
     get_file_names(datadir, radar_files);
 
@@ -107,12 +112,15 @@ int main(int argc, char *argv[])
     std::cout << "writing file as " << "yeti_odom_result.csv" << std::endl; 
     
     // Create ORB feature detector
+    // detector is a pointer that points to object of type cv::ORB	
+    // create() is the ORB constructor	
     cv::Ptr<cv::ORB> detector = cv::ORB::create();
     detector->setPatchSize(patch_size);
     detector->setEdgeThreshold(patch_size);
     // BRUTEFORCE_HAMMING for ORB descriptors FLANNBASED for cen2019 descriptors
     cv::Ptr<cv::DescriptorMatcher> matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::BRUTEFORCE_HAMMING);
-
+    
+    //In OpenCV the main matrix class is called Mat and is contained in the OpenCV-namespace cv
     cv::Mat img1, img2, desc1, desc2;
     std::vector<cv::KeyPoint> kp1, kp2;
     Eigen::MatrixXd targets, cart_targets1, cart_targets2;
