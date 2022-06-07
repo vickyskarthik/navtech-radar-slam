@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
             cart_feature_cloud = cart_targets2;
             convert_to_bev(cart_targets2, cart_resolution, cart_pixel_width, patch_size, kp2, t2);
             // cen2019descriptors(azimuths, cv::Size(fft_data.cols, fft_data.rows), targets, cart_targets2,
-                // radar_resolution, 0.3456, 722, desc2);
+            // radar_resolution, 0.3456, 722, desc2);
             detector->compute(img2, kp2, desc2);
         }
         if (keypoint_extraction == 2) {
@@ -269,6 +269,7 @@ int main(int argc, char *argv[])
         nav_msgs::Odometry odom;
         odom.header.frame_id = "/camera_init";
         odom.child_frame_id = "/yeti_odom"; 
+ 
         // odom.header.stamp = ros::Time().fromSec( currOdomTimeSec );
         odom.header.stamp = currOdomROSTime;
         odom.pose.pose.position.x = currOdom(0, 3);
