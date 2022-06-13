@@ -137,9 +137,13 @@ int main(int argc, char *argv[])
         if( i % 100 == 0)
             std::cout << i << "/" << radar_files.size() << std::endl;
 
-        if (i > 0) {
-            t1 = t2; desc1 = desc2.clone(); cart_targets1 = cart_targets2;
-            kp1 = kp2; img2.copyTo(img1);
+        if (i > 0) 
+	{
+            t1 = t2; 
+	    desc1 = desc2.clone(); 
+            cart_targets1 = cart_targets2;
+            kp1 = kp2; 
+	    img2.copyTo(img1);
         }
         load_radar(datadir + "/" + radar_files[i], times, azimuths, valid, fft_data, CIR204); // use CIR204 for MulRan dataset
 
@@ -147,7 +151,8 @@ int main(int argc, char *argv[])
             cen2018features(fft_data, zq, sigma_gauss, min_range, targets);
         if (keypoint_extraction == 1)
             cen2019features(fft_data, max_points, min_range, targets); // targets: 3xN
-        if (keypoint_extraction == 0 || keypoint_extraction == 1) {
+        if (keypoint_extraction == 0 || keypoint_extraction == 1) 
+	{
             radar_polar_to_cartesian(azimuths, fft_data, radar_resolution, cart_resolution, cart_pixel_width, interp, img2, CV_8UC1);  // NOLINT
             polar_to_cartesian_points(azimuths, times, targets, radar_resolution, cart_targets2, t2);
             cart_feature_cloud = cart_targets2;
@@ -172,10 +177,12 @@ int main(int argc, char *argv[])
 
         // Filter matches using nearest neighbor distance ratio (Lowe, Szeliski)
         std::vector<cv::DMatch> good_matches;
-        for (uint j = 0; j < knn_matches.size(); ++j) {
+        for (uint j = 0; j < knn_matches.size(); ++j) 
+	{
             if (!knn_matches[j].size())
                 continue;
-            if (knn_matches[j][0].distance < nndr * knn_matches[j][1].distance) {
+            if (knn_matches[j][0].distance < nndr * knn_matches[j][1].distance) 
+	    {
                 good_matches.push_back(knn_matches[j][0]);
             }
         }
@@ -184,7 +191,8 @@ int main(int argc, char *argv[])
         Eigen::MatrixXd p1 = Eigen::MatrixXd::Zero(2, good_matches.size());
         Eigen::MatrixXd p2 = p1;
         std::vector<int64_t> t1prime = t1, t2prime = t2;
-        for (uint j = 0; j < good_matches.size(); ++j) {
+        for (uint j = 0; j < good_matches.size(); ++j) 
+	{
             p1(0, j) = cart_targets1(0, good_matches[j].queryIdx);
             p1(1, j) = cart_targets1(1, good_matches[j].queryIdx);
             p2(0, j) = cart_targets2(0, good_matches[j].trainIdx);
