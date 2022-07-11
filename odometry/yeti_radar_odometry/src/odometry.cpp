@@ -43,15 +43,15 @@ int main(int argc, char *argv[])
 	ros::init(argc, argv, "yetiOdom");
 	// NodeHandle is the main access point to communications with the ROS system.
 	ros::NodeHandle nh;
-        // specify the numner of threads to use when creating parallel regions
+    // specify the numner of threads to use when creating parallel regions
 	// omp - OpenMP API supports multi-platform shared memory parallel programming in C/C++
-        omp_set_num_threads(8);
+    omp_set_num_threads(8);
 
 	//Tell ROS master that we are publishing nav_msgs
 	//Publishing odometry wieht yeti_odom and queue size=100
 	pubOdom = nh.advertise<nav_msgs::Odometry>("/yeti_odom", 100);
 	//currOdom is set to 4x4 Identity matrix
-        currOdom = Eigen::MatrixXd::Identity(4, 4); // initial pose is I
+    currOdom = Eigen::MatrixXd::Identity(4, 4); // initial pose is I
 
 	pubLaserCloudLocal = nh.advertise<sensor_msgs::PointCloud2>("/yeti_cloud_local", 100);
 	pubLaserCloudGlobal = nh.advertise<sensor_msgs::PointCloud2>("/yeti_cloud_global", 100);
@@ -126,7 +126,6 @@ int main(int argc, char *argv[])
     Eigen::MatrixXd targets, cart_targets1, cart_targets2;
     Eigen::MatrixXd cart_feature_cloud;
     std::vector<int64_t> t1, t2;
-
     std::vector<int64_t> times;
     std::vector<double> azimuths;
     std::vector<bool> valid;
@@ -138,13 +137,14 @@ int main(int argc, char *argv[])
             std::cout << i << "/" << radar_files.size() << std::endl;
 
         if (i > 0) 
-	{
+	    {
             t1 = t2; 
-	    desc1 = desc2.clone(); 
+    	    desc1 = desc2.clone(); 
             cart_targets1 = cart_targets2;
             kp1 = kp2; 
-	    img2.copyTo(img1);
+	        img2.copyTo(img1);
         }
+        // if navtech_version == CIR204 => range_bins = 3360
         load_radar(datadir + "/" + radar_files[i], times, azimuths, valid, fft_data, CIR204); // use CIR204 for MulRan dataset
 
         if (keypoint_extraction == 0)
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
         if (keypoint_extraction == 1)
             cen2019features(fft_data, max_points, min_range, targets); // targets: 3xN
         if (keypoint_extraction == 0 || keypoint_extraction == 1) 
-	{
+	    {
             radar_polar_to_cartesian(azimuths, fft_data, radar_resolution, cart_resolution, cart_pixel_width, interp, img2, CV_8UC1);  // NOLINT
             polar_to_cartesian_points(azimuths, times, targets, radar_resolution, cart_targets2, t2);
             cart_feature_cloud = cart_targets2;
@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
         // Filter matches using nearest neighbor distance ratio (Lowe, Szeliski)
         std::vector<cv::DMatch> good_matches;
         for (uint j = 0; j < knn_matches.size(); ++j) 
-	{
+	    {
             if (!knn_matches[j].size())
                 continue;
             if (knn_matches[j][0].distance < nndr * knn_matches[j][1].distance) 
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
         Eigen::MatrixXd p2 = p1;
         std::vector<int64_t> t1prime = t1, t2prime = t2;
         for (uint j = 0; j < good_matches.size(); ++j) 
-	{
+	    {
             p1(0, j) = cart_targets1(0, good_matches[j].queryIdx);
             p1(1, j) = cart_targets1(1, good_matches[j].queryIdx);
             p2(0, j) = cart_targets2(0, good_matches[j].trainIdx);
@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
         ofs << time1 << "," << time2 << "," << Tmd(0, 3) << "," << Tmd(1, 3) << "," <<  yaw2 << ",";
         ofs << Tmd2(0, 3) << "," << Tmd2(1, 3) << "," << yaw3 << "\n";
 
-        // curuent state
+        // current state
         currOdom = currOdom * Tmd;
         Eigen::Matrix3d currOdomRot = currOdom.block(0,0,3,3);
         Eigen::Vector3d currOdomEuler = currOdomRot.eulerAngles(0,1,2);
