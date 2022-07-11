@@ -4,6 +4,8 @@ yetiOdom node saves the trajectory without loop closure
 
 which can be visualized using the repo: https://github.com/gisbi-kim/yeti_odom_drawer the code for which is uploaded as yet_odom.m
 
+http://wiki.ros.org/pcl_ros can be used to save pcd file
+
 # navtech-radar-slam
 Radar SLAM: yeti radar odometry + ScanContext-based Loop Closing 
 
