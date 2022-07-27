@@ -48,6 +48,9 @@ void load_radar(std::string path, std::vector<int64_t> &timestamps, std::vector<
     std::vector<bool> &valid, cv::Mat &fft_data, int navtech_version) {
     int encoder_size = 5600;
     cv::Mat raw_example_data = cv::imread(path, cv::IMREAD_GRAYSCALE);
+    // RADAR polar image dimension = 3371 x 400 with metadata
+    // without metadata it is 3360 x 400
+    // N = 400 size of timestamps, azimuths, valid = 400
     int N = raw_example_data.rows;
     timestamps = std::vector<int64_t>(N, 0);
     azimuths = std::vector<double>(N, 0);
