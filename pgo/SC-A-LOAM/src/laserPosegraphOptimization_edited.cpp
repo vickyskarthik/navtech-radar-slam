@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 #include <optional>
-// PCL libraries are included
+
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/search/impl/search.hpp>
@@ -671,10 +671,10 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "laserPGO");
 	ros::NodeHandle nh;
-
+    // syntax: nh.param<type>("param_name", variable, "value");
 	nh.param<double>("keyframe_meter_gap", keyframeMeterGap, 2.0); // pose assignment every k frames 
 	nh.param<double>("sc_dist_thres", scDistThres, 0.2); // pose assignment every k frames 
-
+    
     ISAM2Params parameters;
     parameters.relinearizeThreshold = 0.01;
     parameters.relinearizeSkip = 1;

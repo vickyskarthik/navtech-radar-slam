@@ -42,11 +42,15 @@ void cfar1d(cv::Mat fft_data, int window_size, float scale, int guard_cells, int
 
 // Runtime: 0.035s
 double cen2018features(cv::Mat fft_data, float zq, int sigma_gauss, int min_range, Eigen::MatrixXd &targets) {
-    auto t1 = std::chrono::high_resolution_clock::now();
+    auto t1 = std::chrono::high_resolution_clock::now(); //Returns a time point representing the current point in time.
 
     std::vector<float> sigma_q(fft_data.rows, 0);
+    // Creates a float vector sigma_q with 400 elements of 0
     // Estimate the bias and subtract it from the signal
     cv::Mat q = fft_data.clone();
+    // Creates a full copy of the array and the underlying data.
+    // For loop
+    // mean of each azimuthal is calculated
     for (int i = 0; i < fft_data.rows; ++i) {
         float mean = 0;
         for (int j = 0; j < fft_data.cols; ++j) {
