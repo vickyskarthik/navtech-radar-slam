@@ -65,7 +65,7 @@ void load_radar(std::string path, std::vector<int64_t> &timestamps, std::vector<
         timestamps[i] = *((int64_t *)(byteArray));
         azimuths[i] = *((uint16_t *)(byteArray + 8)) * 2 * M_PI / double(encoder_size);
         valid[i] = byteArray[10] == 255;
-        for (int j = 42; j < range_bins; j++) {
+        for (int j = 42; j < range_bins; j++) { //j=42
             fft_data.at<float>(i, j) = (float)*(byteArray + 11 + j) / 255.0;
         }
     }
@@ -191,8 +191,11 @@ double get_azimuth_index(std::vector<double> &azimuths, double azimuth) {
 
 void radar_polar_to_cartesian(std::vector<double> &azimuths, cv::Mat &fft_data, float radar_resolution,
     float cart_resolution, int cart_pixel_width, bool interpolate_crossover, cv::Mat &cart_img, int output_type,
-    int navtech_version) {
-
+    int navtech_version) 
+{
+    // cart_pixel_width = 964      height and width of cartesian image in pixels
+    // cart_resolution = 0.2592    m per pixel
+    // cart_min_range = 
     float cart_min_range = (cart_pixel_width / 2) * cart_resolution;
     if (cart_pixel_width % 2 == 0)
         cart_min_range = (cart_pixel_width / 2 - 0.5) * cart_resolution;

@@ -42,7 +42,7 @@ int main() {
     Eigen::MatrixXd cart_targets;
     polar_to_cartesian_points(azimuths, targets, radar_resolution, cart_targets);
     cv::Mat vis;
-    // draw_points(cart_img, cart_targets, cart_resolution, cart_pixel_width, vis);
+    draw_points(cart_img, cart_targets, cart_resolution, cart_pixel_width, vis);
     cv::imshow("cart", cart_img);
     cv::waitKey(0);
 
