@@ -39,6 +39,15 @@ void cfar1d(cv::Mat fft_data, int window_size, float scale, int guard_cells, int
     std::chrono::duration<double> e = t2 - t1;
     std::cout << "feature extraction: " << e.count() << std::endl;
 }
+/*cen2018 Features defined in odometry.cpp 
+    float zq = 3.0;
+    int sigma_gauss = 17;
+    // cen2019 parameters
+    int max_points = 10000;
+    // ORB descriptor / matching parameters
+    int patch_size = 21;                // width of patch in pixels in cartesian radar image
+    float nndr = 0.80;                  // Nearest neighbor distance ratio
+*/
 
 // Runtime: 0.035s
 double cen2018features(cv::Mat fft_data, float zq, int sigma_gauss, int min_range, Eigen::MatrixXd &targets) {
@@ -50,7 +59,7 @@ double cen2018features(cv::Mat fft_data, float zq, int sigma_gauss, int min_rang
     cv::Mat q = fft_data.clone();
     // Creates a full copy of the array and the underlying data.
     // For loop
-    // mean of each azimuthal is calculated
+    // mean of each azimuthal(each row) is calculated
     for (int i = 0; i < fft_data.rows; ++i) {
         float mean = 0;
         for (int j = 0; j < fft_data.cols; ++j) {
@@ -61,24 +70,42 @@ double cen2018features(cv::Mat fft_data, float zq, int sigma_gauss, int min_rang
             q.at<float>(i, j) = fft_data.at<float>(i, j) - mean;
         }
     }
-
+    // std::cout<< "sigma_gauss =" << sigma_gauss << std::endl;
     // Create 1D Gaussian Filter (0.09)
+    /*
+    sigma_gauss = 17
+    fsize = 51
+    mu = 25
+    sig_sqr = 289
+    */
     assert(sigma_gauss % 2 == 1);
     int fsize = sigma_gauss * 3;
     int mu = fsize / 2;
     float sig_sqr = sigma_gauss * sigma_gauss;
     cv::Mat filter = cv::Mat::zeros(1, fsize, CV_32F);
     float s = 0;
+    //std::cout<< "fsize =" << fsize << "mu =" << mu << "sig_sqr =" << sig_sqr << std::endl;
     for (int i = 0; i < fsize; ++i) {
         filter.at<float>(0, i) = exp(-0.5 * (i - mu) * (i - mu) / sig_sqr);
         s += filter.at<float>(0, i);
     }
     filter /= s;
+    
     cv::Mat p;
+    // Applying the filter2D() function
+    // filter2D(src, dst, ddepth , kernel, anchor, delta, BORDER_DEFAULT );
+    // q is an unbiased signal
+    // p smoothened signal that has low frequency signal.
+    // Depth = -1 provides the same depth as input image
+    // kernel = filter = 1D Gaussian
+    // CV::Point(-1,-1) = anchor = (-1,-1) indicates centre by defaule
+    // Delta = 0 = A value to be added to each pixel during the correlation. By default it is  0
+    // cv::BORDER_REFLECT101 = 
     cv::filter2D(q, p, -1, filter, cv::Point(-1, -1), 0, cv::BORDER_REFLECT101);
 
     // Estimate variance of noise at each azimuth (0.004)
     for (int i = 0; i < fft_data.rows; ++i) {
+        //std::cout << "sigma_q = " << sigma_q << std::endl;
         int nonzero = 0;
         for (int j = 0; j < fft_data.cols; ++j) {
             float n = q.at<float>(i, j);
@@ -94,6 +121,7 @@ double cen2018features(cv::Mat fft_data, float zq, int sigma_gauss, int min_rang
     }
 
     // Extract peak centers from each azimuth
+    // min_range = 58
     std::vector<std::vector<cv::Point2f>> t(fft_data.rows);
 #pragma omp parallel for
     for (int i = 0; i < fft_data.rows; ++i) {

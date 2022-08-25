@@ -149,6 +149,7 @@ int main(int argc, char *argv[])
 
         if (keypoint_extraction == 0)
             cen2018features(fft_data, zq, sigma_gauss, min_range, targets);
+            //cen2018features(cv::Mat fft_data, float zq, int sigma_gauss, int min_range, Eigen::MatrixXd &targets);
         if (keypoint_extraction == 1)
             cen2019features(fft_data, max_points, min_range, targets); // targets: 3xN
         if (keypoint_extraction == 0 || keypoint_extraction == 1) 
@@ -167,6 +168,12 @@ int main(int argc, char *argv[])
             convert_from_bev(kp2, cart_resolution, cart_pixel_width, cart_targets2);
             getTimes(cart_targets2, azimuths, times, t2);
         }
+        cfar1d(cv::Mat fft_data, int window_size, float scale, int guard_cells, int min_range, targets);
+        radar_polar_to_cartesian(azimuths, fft_data, radar_resolution, cart_resolution, cart_pixel_width, interp, img2, CV_8UC1);  // NOLINT
+        polar_to_cartesian_points(azimuths, times, targets, radar_resolution, cart_targets2, t2);
+        cart_feature_cloud = cart_targets2;
+        convert_to_bev(cart_targets2, cart_resolution, cart_pixel_width, patch_size, kp2, t2);
+        detector->compute(img2, kp2, desc2);
 
         if (i == 0)
             continue;
